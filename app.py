@@ -4,13 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.title("Training Load Calculator")
+st.title("Training Load Tool")
 st.write("")
-st.write("Please add drills to the table below to calculate the training load for this session.")
+st.write("Gelieve drills toe te voegen aan de tabel hieronder om de training load voor deze sessie te berekenen.")
 st.write("")
 
 # Init training df
-training_df = pd.DataFrame(columns=["Drill", "Duration", "RPE"])
+training_df = pd.DataFrame(columns=["Drill", "Duur", "RPE"])
 
 # Allow user to input data
 edited_df = st.data_editor(
@@ -18,11 +18,11 @@ edited_df = st.data_editor(
     column_config={
         "Drill": st.column_config.TextColumn(
             "Drill",
-            help="Name of the drill to be performed"
+            help="Naam van de drill die uitgevoerd wordt"
         ),
-        "Duration": st.column_config.NumberColumn(
-            "Duration",
-            help="The duration of the drill in minutes",
+        "Duur": st.column_config.NumberColumn(
+            "Duur",
+            help="De duur van de drill in minuten",
             min_value=0,
             step=1,
         ),
@@ -45,10 +45,10 @@ if not edited_df.empty and edited_df["Drill"].notna().any():
     
     if not df_clean.empty:
         # Calculate sRPE for each drill
-        df_clean["sRPE"] = df_clean["Duration"] * df_clean["RPE"]
+        df_clean["sRPE"] = df_clean["Duur"] * df_clean["RPE"]
         
         # Calculate totals
-        total_duration = df_clean["Duration"].sum()
+        total_duration = df_clean["Duur"].sum()
         total_srpe = df_clean["sRPE"].sum()
         session_rpe = total_srpe / total_duration if total_duration > 0 else 0
         
@@ -65,7 +65,7 @@ if not edited_df.empty and edited_df["Drill"].notna().any():
         summary_data = df_clean.copy()
         totals_row = pd.DataFrame({
             "Drill": ["Sessie"],
-            "Duration": [total_duration],
+            "Duur": [total_duration],
             "RPE": [round(session_rpe, 2)],
             "sRPE": [total_srpe]
         })
@@ -76,7 +76,7 @@ if not edited_df.empty and edited_df["Drill"].notna().any():
         for _, row in summary_data.iterrows():
             table_data.append([
                 str(row["Drill"]),
-                f"{row['Duration']:.0f}" if pd.notna(row['Duration']) else "",
+                f"{row['Duur']:.0f}" if pd.notna(row['Duur']) else "",
                 f"{row['RPE']:.0f}" if pd.notna(row['RPE']) else "",
                 f"{row['sRPE']:.0f}" if pd.notna(row['sRPE']) else ""
             ])
@@ -211,8 +211,8 @@ if not edited_df.empty and edited_df["Drill"].notna().any():
         buf.seek(0)
         
         st.download_button(
-            label="Download Training Load Summary",
+            label="Download Training Load Samenvatting",
             data=buf.getvalue(),
-            file_name="training_load_summary.png",
+            file_name="training_load_samenvatting.png",
             mime="image/png"
         )
