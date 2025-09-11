@@ -77,7 +77,7 @@ if not edited_df.empty and edited_df["Drill"].notna().any():
             table_data.append([
                 str(row["Drill"]),
                 f"{row['Duration']:.0f}" if pd.notna(row['Duration']) else "",
-                f"{row['RPE']:.2f}" if pd.notna(row['RPE']) else "",
+                f"{row['RPE']:.0f}" if pd.notna(row['RPE']) else "",
                 f"{row['sRPE']:.0f}" if pd.notna(row['sRPE']) else ""
             ])
 
