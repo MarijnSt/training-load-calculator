@@ -3,6 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 # from io import BytesIO
 
+from src.styling.colors import colors
+from src.styling.fonts import fonts
+from src.styling.typography import typo
+
 def create_training_chart(session_df):
     """
     Creates and displays a training load chart with table and summary statistics.
@@ -38,6 +42,8 @@ def create_training_chart(session_df):
         "RPE": [round(session_rpe, 2)],
         "sRPE": [total_srpe]
     })
+
+    # Merge summary data with totals row
     summary_data = pd.concat([summary_data, totals_row], ignore_index=True)
     
     # Pandas formatting
@@ -47,6 +53,20 @@ def create_training_chart(session_df):
     # Calculate dynamic figure size
     num_rows = len(formatted_df)
     fig_height = max(8, 6 + (num_rows * 0.5))
+
+    # Init plt styling
+    plt.rcParams.update({
+        'font.family': fonts['light'].get_name(),
+        'font.size': typo['sizes']['p'],
+        'text.color': colors['primary'],
+        'axes.labelcolor': colors['primary'],
+        'axes.edgecolor': colors['primary'],
+        'xtick.color': colors['primary'],
+        'ytick.color': colors['primary'],
+        'grid.color': colors['primary'],
+        'figure.facecolor': colors['white'],
+        'axes.facecolor': colors['white'],
+    })
 
     # Create figure
     fig, ax = plt.subplots(figsize=(12, fig_height))
@@ -66,36 +86,39 @@ def create_training_chart(session_df):
     
     # Style the table
     table.auto_set_font_size(False)
-    table.set_fontsize(10)
+    table.set_fontsize(typo['sizes']['p'])
     table.scale(1, 2)
     
     # Style header
     for i in range(4):
-        table[(0, i)].set_facecolor('#f2f4ee')
-        table[(0, i)].set_text_props(weight='bold')
+        table[(0, i)].set_facecolor(colors['light'])
+        table[(0, i)].set_text_props(fontproperties=fonts['medium_italic'])
     
     # Style totals row
     for i in range(4):
-        table[(len(formatted_df), i)].set_facecolor('#f2f4ee')
-        table[(len(formatted_df), i)].set_text_props(weight='bold')
+        table[(len(formatted_df), i)].set_facecolor(colors['light'])
+        table[(len(formatted_df), i)].set_text_props(fontproperties=fonts['medium_italic'])
     
     # Game reference text
-    ax.text(0.2, 0.15, "Wedstrijd referentie", fontweight='bold')
-    ax.text(0.2, 0.1, f"{match_duration} x {match_rpe} = {match_srpe} AU", fontsize=10)
+    ax.text(0.15, 0.15, "Wedstrijd referentie", fontproperties=fonts['medium_italic'])
+    ax.text(0.15, 0.1, f"{match_duration} x {match_rpe} = {match_srpe} AU")
+    ax.text(0.15, 0.07, "(duur x RPE)", fontsize=typo['sizes']['label'])
 
     # Training load text
-    ax.text(0.4, 0.15, "Training load", fontweight='bold')
-    ax.text(0.4, 0.1, f"Absoluut:", fontsize=10)
-    ax.text(0.465, 0.1, f"{total_srpe:.0f} AU", fontsize=10, fontweight='bold')
-    ax.text(0.4, 0.05, f"Relatief: {total_srpe:.0f} / {match_srpe} =", fontsize=10)
-    ax.text(0.535, 0.05, f"{relative_load:.0f}%", fontsize=10, fontweight='bold')
+    ax.text(0.44, 0.15, "Training load", fontproperties=fonts['medium_italic'])
+    ax.text(0.44, 0.1, "Absoluut:")
+    ax.text(0.51, 0.1, f"{total_srpe:.0f} AU", fontproperties=fonts['medium_italic'])
+    ax.text(0.44, 0.07, "(totale sRPE)", fontsize=typo['sizes']['label'])
+    ax.text(0.44, 0.025, "Relatief:")
+    ax.text(0.51, 0.025, f"{relative_load:.0f}%", fontproperties=fonts['medium_italic'])
 
     # Training intensity text
-    ax.text(0.6, 0.15, "Trainingsintensiteit", fontweight='bold')
-    ax.text(0.6, 0.1, f"Absoluut: {total_srpe:.0f} / {total_duration:.0f} =", fontsize=10)
-    ax.text(0.735, 0.1, f"{session_rpe:.1f} RPE", fontsize=10, fontweight='bold')
-    ax.text(0.6, 0.05, f"Relatief: {session_rpe:.1f} / {match_rpe} =", fontsize=10)
-    ax.text(0.715, 0.05, f"{relative_intensity:.0f}%", fontsize=10, fontweight='bold')
+    ax.text(0.7, 0.15, "Trainingsintensiteit", fontproperties=fonts['medium_italic'])
+    ax.text(0.7, 0.1, "Absoluut:")
+    ax.text(0.77, 0.1, f"{session_rpe:.1f} RPE", fontproperties=fonts['medium_italic'])
+    ax.text(0.7, 0.07, "(totale sRPE / totale duur)", fontsize=typo['sizes']['label'])
+    ax.text(0.7, 0.025, "Relatief:")
+    ax.text(0.77, 0.025, f"{relative_intensity:.0f}%", fontproperties=fonts['medium_italic'])
 
     plt.tight_layout()
     
